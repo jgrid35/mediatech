@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "module": "NodeNext",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": "./src",
+    "esModuleInterop": true,
+    "moduleResolution": "NodeNext"
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "**/*.spec.ts",
+    "node_modules/**/*.ts"
+  ]
+}

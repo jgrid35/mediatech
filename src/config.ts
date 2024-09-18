@@ -15,6 +15,12 @@ export type Config = {
     },
     omdb: {
         apiKey: string,
+    },
+    freebox: {
+        host: string,
+        port: number,
+        username: string,
+        password: string,
     }
 }
 
@@ -31,5 +37,11 @@ export const config: Config = {
     },
     omdb: {
         apiKey: process.env.OMDB_API_KEY || '',
+    },
+    freebox: {
+        host: process.env.FREEBOX_HOST,
+        port: Number(process.env.FREEBOX_PORT),
+        username: process.env.FREEBOX_USER,
+        password: process.env.FREEBOX_PASSWORD,
     }
 };

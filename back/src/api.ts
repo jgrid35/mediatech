@@ -9,7 +9,7 @@ import { config } from './config.js';
 
 const app = express();
 app.use(cors({
-    origin: 'http://localhost:3000',  // Restrict to your front-end origin
+    origin: '*',  // Restrict to your front-end origin
     methods: 'GET,POST,PUT,DELETE,OPTIONS',  // Allow necessary methods
     allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization'  // Include any required headers
 }));

@@ -25,7 +25,7 @@ services:
     depends_on:
       - back
     environment:
-      REACT_APP_BACK_URL: "back"
+      REACT_APP_BACK_URL: "mediatech_back"
     deploy:
       replicas: 1
       restart_policy:

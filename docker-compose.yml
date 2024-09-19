@@ -20,7 +20,7 @@ services:
     depends_on:
       - back
     environment:
-      - REACT_APP_BACK_URL=back
+      - REACT_APP_BACK_URL=mediatech_back
 
 secrets:
   freebox_secret:

@@ -28,7 +28,7 @@ services:
     depends_on:
       - back
     environment:
-      REACT_APP_BACK_URL: "mediatech_back"
+      REACT_APP_BACK_URL: "192.168.1.149"
     deploy:
       replicas: 1
       restart_policy:

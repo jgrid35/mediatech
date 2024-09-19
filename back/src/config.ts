@@ -21,6 +21,7 @@ export type Config = {
         port: number,
         username: string,
         password: string,
+        folder: string
     }
 }
 
@@ -43,5 +44,6 @@ export const config: Config = {
         port: Number(process.env.FREEBOX_PORT),
         username: process.env.FREEBOX_USER,
         password: process.env.FREEBOX_PASSWORD,
+        folder: process.env.FREEBOX_MEDIA_FOLDER
     }
 };

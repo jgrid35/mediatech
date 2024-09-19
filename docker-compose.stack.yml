@@ -11,7 +11,7 @@ services:
     environment:
       FREEBOX_USE_FTPS: "false"
       FREEBOX_USER: "freebox"
-      FREEBOX_PORT: "22"
+      FREEBOX_PORT: "21"
       FREEBOX_MEDIA_FOLDER: "Freebox/Media/Films"
     deploy:
       replicas: 1  # Set the number of replicas to deploy

@@ -14,7 +14,7 @@ const MovieGrid = () => {
     const [error, setError] = useState(null);  // State to handle errors
 
     const url = process.env.REACT_APP_BACK_URL;
-    const protocol = (process.env.HTTPS === 'true') ? 'https' : 'http'
+    const protocol = (process.env.REACT_APP_HTTPS === 'true') ? 'https' : 'http'
 
     const handleClick = async (folder: string) => {
         try {

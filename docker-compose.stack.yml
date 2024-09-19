@@ -33,6 +33,7 @@ services:
     environment:
       REACT_APP_BACK_URL: "192.168.1.149"
       HTTPS: "true"
+      REACT_APP_HTTPS: "true"
     deploy:
       replicas: 1
       restart_policy:

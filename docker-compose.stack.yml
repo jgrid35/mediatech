@@ -11,6 +11,7 @@ services:
     environment:
       FREEBOX_USE_FTPS: "false"
       FREEBOX_USER: "freebox"
+      FREEBOX_PORT: "22"
       FREEBOX_MEDIA_FOLDER: "Freebox/Media/Films"
     deploy:
       replicas: 1  # Set the number of replicas to deploy
@@ -24,7 +25,7 @@ services:
     depends_on:
       - back
     environment:
-      - REACT_APP_BACK_URL=back
+      REACT_APP_BACK_URL: "back"
     deploy:
       replicas: 1
       restart_policy:

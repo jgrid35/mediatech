@@ -2,8 +2,7 @@ version: "3.8"
 
 services:
   back:
-    build:
-      context: ./back  # Build the 'back' service from the 'back/' directory
+    image: mediatech-back
     ports:
       - 3001:3001
     secrets:
@@ -19,8 +18,7 @@ services:
         condition: on-failure  # Define a restart policy
 
   front:
-    build:
-      context: ./front  # Build the 'front' service from the 'front/' directory
+    image: mediatech-front
     ports:
       - 3000:3000
     depends_on:

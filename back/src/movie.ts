@@ -1,8 +1,10 @@
 
 import { config } from './config.js';
 import { GetMovieResponse, MovieMetadata } from "types/omdb.js";
+import { readFileSync } from 'fs';
 
-const apiKey = config.omdb.apiKey;
+const omdbapiSecretPath = `/run/secrets/omdbapi_secret`;
+const apiKey = config.omdb.apiKey ? config.omdb.apiKey : readFileSync(omdbapiSecretPath, 'utf8');
 const omdbApi = `https://www.omdbapi.com/?apikey=${apiKey}&`;
 
 type GetMovieMetadata = (movie: string) => Promise<GetMovieResponse>

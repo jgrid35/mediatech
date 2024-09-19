@@ -1,0 +1,22 @@
+version: '3.5'
+
+services:
+  back:
+    build:
+      context: back/.
+    secrets:
+      - freebox_secret
+      - omdbapi_secret
+    environment:
+      - FREEBOX_USE_FTPS=false
+      - FREEBOX_USER=freebox
+      - FREEBOX_MEDIA_FOLDER=Freebox/Media/Films
+  front:
+    build:
+      context: front/.
+    depends_on:
+      - back
+
+secrets:
+  freebox_secret:
+    external: true

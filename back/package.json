@@ -28,8 +28,7 @@
   },
   "scripts": {
     "build": "tsc --project tsconfig.json",
-    "start": "node dist/main.js",
-    "start:api": "node dist/api.js",
+    "start": "node dist/api.js",
     "watch": "tsc -w -p ."
   }
 }

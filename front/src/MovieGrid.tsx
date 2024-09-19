@@ -14,10 +14,11 @@ const MovieGrid = () => {
     const [error, setError] = useState(null);  // State to handle errors
 
     const url = process.env.REACT_APP_BACK_URL;
+    const protocol = (process.env.HTTPS === 'true') ? 'https' : 'http'
 
     const handleClick = async (folder: string) => {
         try {
-            window.open(`http://${url}:3001/download/${folder}`)
+            window.open(`${protocol}://${url}:3001/download/${folder}`)
         } catch (err) {
         }
     };
@@ -42,7 +43,7 @@ const MovieGrid = () => {
         // Fetch movies only once when the component is mounted
         const fetchMovies = async () => {
             try {
-                const response = await fetch(`http://${url}:3001/movies`);
+                const response = await fetch(`${protocol}://${url}:3001/movies`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }

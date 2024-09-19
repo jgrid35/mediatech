@@ -18,6 +18,8 @@ services:
       - 3000:3000
     depends_on:
       - back
+    environment:
+      - REACT_APP_BACK_URL=back
 
 secrets:
   freebox_secret:

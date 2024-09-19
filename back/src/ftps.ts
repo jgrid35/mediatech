@@ -12,7 +12,7 @@ export async function ftpConnect(): Promise<Client> {
         await client.access({
             host: config.freebox.ftps ? config.freebox.host : 'mafreebox.freebox.fr',
             user: config.freebox.username,
-            password: config.freebox.password ? config.freebox.password : readFileSync(freeboxSecretPath, 'utf8'),
+            password: config.freebox.password ? config.freebox.password : readFileSync(freeboxSecretPath, 'utf8').trim(),
             secure: true,
             port: config.freebox.ftps ? config.freebox.port : 22,
             secureOptions: {

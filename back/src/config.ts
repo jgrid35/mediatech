@@ -3,6 +3,9 @@ import dotenv from 'dotenv'
 dotenv.config();
 
 export type Config = {
+    server: {
+        https: boolean;
+    }
     omdb: {
         apiKey: string | null,
     },
@@ -17,11 +20,15 @@ export type Config = {
 }
 
 export const config: Config = {
+    server:
+    {
+        https: process.env.USE_HTTPS === 'true'
+    },
     omdb: {
         apiKey: process.env.OMDB_API_KEY || null,
     },
     freebox: {
-        ftps: Boolean(process.env.FREEBOX_USE_FTPS),
+        ftps: process.env.FREEBOX_USE_FTPS === 'true',
         host: process.env.FREEBOX_HOST,
         port: Number(process.env.FREEBOX_PORT),
         username: process.env.FREEBOX_USER,

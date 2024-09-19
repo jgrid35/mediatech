@@ -1,4 +1,5 @@
 import express from 'express';
+import https from 'https';
 import { downloadMovie, getMovieList } from './ftps.js'
 import cors from 'cors';
 import bodyParser from 'body-parser';
@@ -6,8 +7,28 @@ import { MovieMetadata } from 'types/omdb.js';
 import { getMovieMetadata } from './movie.js';
 import { testData } from './test-data.js'
 import { config } from './config.js';
+import { readFileSync } from 'fs';
 
 const app = express();
+
+if (config.server.https) {
+    const privateKey = readFileSync(`/run/secrets/private_key`, 'utf8').trim();
+    const certificate = readFileSync(`/run/secrets/certificate`, 'utf8').trim();
+    const credentials = { key: privateKey, cert: certificate };
+
+    // Create an HTTPS server
+    const httpsServer = https.createServer(credentials, app);
+
+    // Start the server
+    httpsServer.listen(3001, () => {
+        console.log('Server running on https://localhost:3001');
+    });
+}
+else {
+    app.listen(3001, () => {
+        console.log("Server running on port 3001");
+    });
+}
 app.use(cors({
     origin: '*',  // Restrict to your front-end origin
     methods: 'GET,POST,PUT,DELETE,OPTIONS',  // Allow necessary methods
@@ -31,10 +52,6 @@ app.get("/movies", async (req: express.Request, res: express.Response) => {
     //     }
     // }
     res.status(200).send(moviesMetadata);
-});
-
-app.listen(3001, () => {
-    console.log("Server running on port 3001");
 });
 
 

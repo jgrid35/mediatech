@@ -8,7 +8,10 @@ services:
     secrets:
       - freebox_secret
       - omdbapi_secret
+      - certificate
+      - private_key
     environment:
+      USE_HTTPS: "true"
       FREEBOX_USE_FTPS: "false"
       FREEBOX_USER: "freebox"
       FREEBOX_HOST: "mafreebox.freebox.fr"
@@ -39,9 +42,14 @@ services:
 
 secrets:
   freebox_secret:
-    external: true  # The secret is created externally and must be available to the swarm
+    external: true
   omdbapi_secret:
-    external: true  # External secret available in Docker Swarm
+    external: true
+  certificate:
+    external: true
+  private_key:
+    external: true
+  
 
 networks:
   mediatech-network:

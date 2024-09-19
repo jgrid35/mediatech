@@ -2,6 +2,8 @@ services:
   back:
     build:
       context: back/.
+    ports:
+      - 3001:3001
     secrets:
       - freebox_secret
       - omdbapi_secret
@@ -12,6 +14,8 @@ services:
   front:
     build:
       context: front/.
+    ports:
+      - 3000:3000
     depends_on:
       - back
 

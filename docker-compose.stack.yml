@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  back:
+    build:
+      context: ./back  # Build the 'back' service from the 'back/' directory
+    ports:
+      - 3001:3001
+    secrets:
+      - freebox_secret
+      - omdbapi_secret
+    environment:
+      FREEBOX_USE_FTPS: "false"
+      FREEBOX_USER: "freebox"
+      FREEBOX_MEDIA_FOLDER: "Freebox/Media/Films"
+    deploy:
+      replicas: 1  # Set the number of replicas to deploy
+      restart_policy:
+        condition: on-failure  # Define a restart policy
+
+  front:
+    build:
+      context: ./front  # Build the 'front' service from the 'front/' directory
+    ports:
+      - 3000:3000
+    depends_on:
+      - back
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+secrets:
+  freebox_secret:
+    external: true  # The secret is created externally and must be available to the swarm
+  omdbapi_secret:
+    external: true  # External secret available in Docker Swarm

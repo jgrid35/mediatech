@@ -11,6 +11,7 @@ services:
     environment:
       FREEBOX_USE_FTPS: "false"
       FREEBOX_USER: "freebox"
+      FREEBOX_HOST: "mafreebox.freebox.fr"
       FREEBOX_PORT: "21"
       FREEBOX_MEDIA_FOLDER: "Freebox/Media/Films"
     deploy:

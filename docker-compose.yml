@@ -1,5 +1,3 @@
-version: '3.5'
-
 services:
   back:
     build:
@@ -19,4 +17,6 @@ services:
 
 secrets:
   freebox_secret:
+    external: true
+  omdbapi_secret:
     external: true

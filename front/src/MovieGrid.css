@@ -1,0 +1,87 @@
+.movie-cell {
+  background-color: #3a3f47;
+  padding: 10px; /* Adjust padding if necessary */
+  margin: 10px; /* This margin should be balanced */
+  width: 280px; /* Ensure this width works with your layout */
+  height: 380px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  text-align: center;
+  overflow: hidden; /* Prevent overflow */
+}
+
+.movie-cell:hover {
+  transform: scale(1.05); /* Scale effect on hover */
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 1; /* Bring hovered cell to the front */
+}
+
+.movie-title {
+  margin-top: 10px;
+  font-size: 1.1rem;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.5); /* Slight background to make text more visible */
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.download-button, .subtitle-button {
+  background-color: #61dafb;
+  color: #282c34;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+}
+
+.download-button:hover, .subtitle-button:hover {
+  background-color: #51c8f0;
+}
+
+.subtitle-button {
+  font-size: 0.9rem;
+  padding: 6px 12px;
+}
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+.popup-content input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.not-available {
+  opacity: 0.6; /* Reduce opacity to indicate it's not clickable */
+  cursor: default; /* Change cursor to default */
+  pointer-events: none; /* Disable pointer events */
+}

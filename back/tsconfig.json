@@ -12,7 +12,8 @@
     "moduleResolution": "NodeNext"
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "src/types/**/*"
   ],
   "exclude": [
     "**/*.spec.ts",

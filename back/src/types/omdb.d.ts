@@ -28,6 +28,8 @@ export type MovieMetadata = {
 
 export interface GetMovieResponse extends MovieMetadata {
     folder: string;
+    fileName?: string;
+    available: boolean;
 }
 
 type Rating = {

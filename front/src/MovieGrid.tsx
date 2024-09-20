@@ -1,97 +1,197 @@
 import { useState, useEffect, CSSProperties } from 'react';
 import { Grid, AutoSizer, ScrollSync } from 'react-virtualized';
+import './MovieGrid.css';
 
 interface CellRendererProps {
     columnIndex: number;
     key: string;
     rowIndex: number;
     style: CSSProperties;
+    columnCount: number;
 }
 
 const MovieGrid = () => {
-    const [movies, setMovies] = useState([]);   // State to store movies
-    const [loading, setLoading] = useState(true);  // State to show loading
-    const [error, setError] = useState(null);  // State to handle errors
+    const [movies, setMovies] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [showPopup, setShowPopup] = useState(false);
+    const [urlInput, setUrlInput] = useState('');
 
     const url = process.env.REACT_APP_BACK_URL;
-    const protocol = (process.env.REACT_APP_HTTPS === 'true') ? 'https' : 'http'
+    const protocol = process.env.REACT_APP_HTTPS === 'true' ? 'https' : 'http';
 
-    const handleClick = async (folder: string) => {
-        try {
-            window.open(`${protocol}://${url}:3001/download/${folder}`)
-        } catch (err) {
+    const handleAddMovie = async () => {
+        const token = localStorage.getItem("authToken");
+        if (token) {
+            const regex = /tt\d{1,}/;
+            const match = urlInput.match(regex) || '';
+            const response = await fetch(`${protocol}://${url}:3001/movie/${match[0]}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            });
+
+            if (response.ok) {
+                setUrlInput('');
+                setShowPopup(false);
+            } else {
+                console.error("Failed to add movie");
+            }
         }
     };
 
+    const handleClick = async (imdbID: string) => {
+        const token = localStorage.getItem("authToken");
+        if (token) {
+            const encodedToken = encodeURIComponent(token);
+            window.open(`${protocol}://${url}:3001/download/${imdbID}?token=${encodedToken}`);
+        } else {
+            console.error("No access token available");
+        }
+    };
 
-    function cellRenderer({ columnIndex, key, rowIndex, style }: CellRendererProps) {
+    const handleSubtitleDownload = async (imdbID: string) => {
+        const token = localStorage.getItem("authToken");
+        if (token) {
+            const encodedToken = encodeURIComponent(token);
+            window.open(`${protocol}://${url}:3001/download-subtitle/${imdbID}?token=${encodedToken}`);
+        } else {
+            console.error("No access token available");
+        }
+    };
+
+    function cellRenderer({ columnIndex, key, rowIndex, style, columnCount }: CellRendererProps) {
+        const movieIndex = rowIndex * columnCount + columnIndex;
+        const movie = movies[movieIndex] as any;
+
+        if (!movie) {
+            return (
+                <div
+                    key={key}
+                    style={{
+                        ...style,
+                        opacity: 0 // Placeholder background
+                    }}
+                >
+                    No Movie
+                </div>
+            );
+        }
+
+        const isAvailable = movie.available; // Check availability
+
         return (
-            <div key={key} style={{
-                ...style,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundImage: `url(${(movies[rowIndex * 4 + columnIndex] as any).Poster})`
-            }}>
-                {(movies[rowIndex * 4 + columnIndex] as any).Title}
-                <button onClick={() => handleClick((movies[rowIndex * 4 + columnIndex] as any).folder)}>Download</button>
+            <div
+                key={key}
+                className={`movie-cell ${!isAvailable ? 'not-available' : ''}`} // Add class if not available
+                style={{
+                    ...style,
+                    backgroundImage: `url(${movie.Poster})`,
+                    backgroundSize: 'cover',
+                    width: '280px',
+                    height: '380px',
+                    pointerEvents: isAvailable ? 'auto' : 'none', // Disable pointer events if not available
+                }}
+            >
+                <div className="movie-title">{movie.Title}</div>
+                {isAvailable && ( // Only render buttons if available
+                    <>
+                        <button className="download-button" onClick={() => handleClick(movie.imdbID)}>Download Movie</button>
+                        <button className="subtitle-button" onClick={() => handleSubtitleDownload(movie.imdbID)}>Download Subtitle</button>
+                    </>
+                )}
             </div>
         );
     }
 
     useEffect(() => {
-        // Fetch movies only once when the component is mounted
         const fetchMovies = async () => {
             try {
-                const response = await fetch(`${protocol}://${url}:3001/movies`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
+                const token = localStorage.getItem("authToken");
+                const response = await fetch(`${protocol}://${url}:3001/movies`, {
+                    headers: { 'Authorization': `Bearer ${token}` },
+                });
+                if (!response.ok) throw new Error('Failed to fetch movies');
                 const data = await response.json();
-                setMovies(data);  // Set the movie data
-            } catch (error: any) {
-                setError(error.message);  // Catch and store error if occurs
+                setMovies(data);
+            } catch (err) {
+                setError((err as Error).message);
             } finally {
-                setLoading(false);  // Set loading to false when the fetch is complete
+                setLoading(false);
             }
         };
+        fetchMovies();
+    }, []);
 
-        fetchMovies();  // Trigger the API call
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
 
-    }, []);  // Empty dependency array ensures it runs only on mount
-
-    if (loading) {
-        return <div>Loading...</div>;  // Show loading state
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;  // Show error if any
-    }
-
-    // Render your grid
     return (
-        <ScrollSync>
-            {({ onScroll, scrollTop, scrollLeft }) => (
-                <AutoSizer>
-                    {({ height, width }) => (
-                        <Grid
-                            cellRenderer={cellRenderer}
-                            columnCount={4}
-                            columnWidth={300}
-                            onScroll={onScroll}
-                            rowCount={movies.length / 4}
-                            rowHeight={300}
-                            height={height}
-                            width={width}
-                        />
-                    )}
+        <div>
+            <ScrollSync>
+                {({ onScroll }) => (
+                    <AutoSizer>
+                    {({ height, width }) => {
+                        const columnCount = Math.floor(width / 300); // Calculate columnCount based on width
+
+                        return (
+                            <Grid
+                                cellRenderer={(props) => cellRenderer({ ...props, columnCount })} // Pass columnCount to cellRenderer
+                                columnCount={columnCount}
+                                columnWidth={300}
+                                height={height}
+                                rowCount={Math.ceil(movies.length / columnCount)} // Adjust row count
+                                rowHeight={400}
+                                width={width}
+                                onScroll={onScroll}
+                            />
+                        );
+                    }}
                 </AutoSizer>
-            )
-            }
-        </ScrollSync>
+                )}
+            </ScrollSync>
+
+            {/* Floating Add Movie Button */}
+            <button
+                className="add-movie-button"
+                onClick={() => setShowPopup(true)}
+                style={{
+                    position: 'fixed',
+                    bottom: '20px',
+                    right: '20px',
+                    backgroundColor: '#61dafb',
+                    color: '#282c34',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '60px',
+                    height: '60px',
+                    fontSize: '24px',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.3s',
+                }}
+            >
+                +
+            </button>
+
+            {/* Popup for adding a movie */}
+            {showPopup && (
+                <div className="popup">
+                    <div className="popup-content">
+                        <h2>Add Movie</h2>
+                        <input
+                            type="text"
+                            value={urlInput}
+                            onChange={(e) => setUrlInput(e.target.value)}
+                            placeholder="Enter movie URL"
+                        />
+                        <button className="download-button" onClick={handleAddMovie}>Confirm</button>
+                        <button className="subtitle-button" onClick={() => setShowPopup(false)}>Cancel</button>
+                    </div>
+                </div>
+            )}
+        </div>
     );
 };
-
-
 
 export default MovieGrid;

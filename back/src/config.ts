@@ -3,12 +3,17 @@ import dotenv from 'dotenv'
 dotenv.config();
 
 export type Config = {
+    env: string,
     server: {
         https: boolean;
+        jwtSecret: string;
     }
     omdb: {
         apiKey: string | null,
     },
+    mongodb: {
+        uri: string,
+    }
     freebox: {
         ftps: boolean,
         host: string,
@@ -20,9 +25,13 @@ export type Config = {
 }
 
 export const config: Config = {
-    server:
-    {
-        https: process.env.USE_HTTPS === 'true'
+    env: (process.env.NODE_ENV === 'dev') ? "dev" : "prod",
+    server: {
+        https: process.env.USE_HTTPS === 'true',
+        jwtSecret: process.env.JWT_SECRET || null
+    },
+    mongodb: {
+        uri: process.env.MONGODB_URI
     },
     omdb: {
         apiKey: process.env.OMDB_API_KEY || null,

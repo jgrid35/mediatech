@@ -21,9 +21,9 @@ services:
       NODE_ENV: "prod"
       MONGODB_URI: "mongodb://localhost:27017/mediatech"
     deploy:
-      replicas: 1  # Set the number of replicas to deploy
+      replicas: 1 # Set the number of replicas to deploy
       restart_policy:
-        condition: on-failure  # Define a restart policy
+        condition: on-failure # Define a restart policy
     networks:
       - mediatech-network
 
@@ -43,6 +43,22 @@ services:
         condition: on-failure
     networks:
       - mediatech-network
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    # environment:
+    #   - MONGO_INITDB_ROOT_USERNAME=yourUsername
+    #   - MONGO_INITDB_ROOT_PASSWORD=yourPassword
+
+volumes:
+  mongo_data:
+    driver: local
 
 secrets:
   freebox_secret:

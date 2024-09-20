@@ -37,8 +37,8 @@ services:
 #   mongo-data:
 #     driver: local
 
-# secrets:
-#   freebox_secret:
-#     external: true
-#   omdbapi_secret:
-#     external: true
+secrets:
+  freebox_secret:
+    external: true
+  omdbapi_secret:
+    external: true

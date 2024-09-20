@@ -3,5 +3,4 @@ client-secret.ts
 tokens.json
 node_modules
 .env
-.nvmrc
 dist

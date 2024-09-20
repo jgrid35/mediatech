@@ -7,6 +7,7 @@ import cron from 'node-cron';
 import { config } from "../config.js";
 
 export const startWorker = () => {
+    console.log("starting worker ...");
     cron.schedule('0 * * * *', async function() {
         console.log("launching cron");
         getDbConnection(config.mongodb.uri);

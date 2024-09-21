@@ -42,7 +42,7 @@ services:
       restart_policy:
         condition: on-failure
     networks:
-      - mediatech-networks
+      - mediatech-network
 
 secrets:
   freebox_secret:

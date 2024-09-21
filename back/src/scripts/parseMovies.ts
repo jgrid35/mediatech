@@ -20,6 +20,3 @@ export async function parseMovies() {
     }
     return true;
 }
-
-await parseMovies();
-process.exit(0);

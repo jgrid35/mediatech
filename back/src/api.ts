@@ -15,7 +15,7 @@ import { authenticateToken, authenticateTokenDownload } from './middleware/auth.
 import { User } from './types/userSchema.js';
 import { getMovieMetadataByID } from './movie.js';
 import { startWorker } from './workers/moviesWorker.js';
-import { parseMovies } from 'scripts/parseMovies.js';
+import { parseMovies } from './scripts/parseMovies.js';
 
 startWorker();
 const app = express();

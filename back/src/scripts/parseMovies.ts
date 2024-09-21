@@ -3,7 +3,7 @@ import { getMovieMetadataByID, getMovieMetadataByTitle } from "../movie.js";
 import { Movie } from "../types/movieSchema.js";
 import { MovieAttributes, MovieMetadata } from "../types/omdb.js";
 
-async function main() {
+export async function parseMovies() {
     const movies: Array<{ title: string, imdbID?: string, fileName: string }> = await getMovieList();
     for (const movie of movies) {
         let movieMetadata: MovieMetadata;
@@ -18,7 +18,8 @@ async function main() {
         if (movieMetadata.Response === 'True') await Movie.create(movieObject as any);
         await uploadEmptyFile(movieMetadata.Response === 'True' ? `${movieMetadata.imdbID}` : 'notfound', movie.title);
     }
-    process.exit(1)
+    return true;
 }
 
-main();
+await parseMovies();
+process.exit(0);

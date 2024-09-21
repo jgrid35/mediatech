@@ -15,6 +15,7 @@ import { authenticateToken, authenticateTokenDownload } from './middleware/auth.
 import { User } from './types/userSchema.js';
 import { getMovieMetadataByID } from './movie.js';
 import { startWorker } from './workers/moviesWorker.js';
+import { parseMovies } from 'scripts/parseMovies.js';
 
 startWorker();
 const app = express();
@@ -124,4 +125,9 @@ app.get("/download/:imdbID", authenticateTokenDownload, async (req: express.Requ
         console.error(err);
         res.status(500).send("Error downloading file");
     }
+});
+
+app.get("/parse", async (req: express.Request, res: express.Response) => {
+    parseMovies();
+    res.status(200).send(true);
 });

@@ -19,7 +19,9 @@ services:
       FREEBOX_PORT: "21"
       FREEBOX_MEDIA_FOLDER: "Freebox/Media/Films"
       NODE_ENV: "prod"
-      DB_PATH: /data/db/mediatech.db
+      DB_PATH: /app/data/mediatech.db
+    volumes:
+      - /data/db:/app/data
     deploy:
       replicas: 1 # Set the number of replicas to deploy
       restart_policy:

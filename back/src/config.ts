@@ -11,8 +11,8 @@ export type Config = {
     omdb: {
         apiKey: string | null,
     },
-    mongodb: {
-        uri: string,
+    database: {
+        path: string,
     }
     freebox: {
         ftps: boolean,
@@ -30,8 +30,8 @@ export const config: Config = {
         https: process.env.USE_HTTPS === 'true',
         jwtSecret: process.env.JWT_SECRET || null
     },
-    mongodb: {
-        uri: process.env.MONGODB_URI
+    database: {
+        path: process.env.DB_PATH,
     },
     omdb: {
         apiKey: process.env.OMDB_API_KEY || null,

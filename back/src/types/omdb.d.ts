@@ -26,13 +26,13 @@ export type MovieMetadata = {
     Response?: string
 }
 
-export interface GetMovieResponse extends MovieMetadata {
+export interface MovieAttributes extends MovieMetadata {
     folder: string;
     fileName?: string;
     available: boolean;
 }
 
-type Rating = {
-    Source: string,
-    Value: string
+export interface RatingAttributes {
+    Source: string;
+    Value: string;
 }

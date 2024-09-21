@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug with Nodemon",
+      "runtimeExecutable": "${workspaceFolder}/back/node_modules/.bin/nodemon",
+      "program": "${workspaceFolder}/back/src/api.ts",
+      "localRoot": "${workspaceFolder}/back",
+      "restart": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "sourceMaps": true,
+      "outFiles": [
+        "${workspaceFolder}/back/dist/**/*.js"
+      ]
+    }
+  ]
+}

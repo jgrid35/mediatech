@@ -1,42 +1,195 @@
-import { model, Schema } from 'mongoose';
-import { GetMovieResponse, Rating } from 'types/omdb.js';
+import { Sequelize, DataTypes, Model } from 'sequelize';
+import { MovieAttributes, RatingAttributes } from './omdb.js';
+import { config } from 'config.js';
 
-const RatingSchema = new Schema<Rating>({
-    Source: { type: String, required: false },
-    Value: { type: String, required: false }
-})
-const MovieSchema = new Schema<GetMovieResponse>({
-    Title: { type: String, required: true },
-    Year: { type: String, required: false },
-    Rated: { type: String, required: false },
-    Released: { type: String, required: false },
-    Runtime: { type: String, required: false },
-    Genre: { type: String, required: false },
-    Director: { type: String, required: false },
-    Writer: { type: String, required: false },
-    Actors: { type: String, required: false },
-    Plot: { type: String, required: false },
-    Language: { type: String, required: false },
-    Country: { type: String, required: false },
-    Awards: { type: String, required: false },
-    Poster: { type: String, required: false },
-    Ratings: [RatingSchema],
-    Metascore: { type: String, required: false },
-    imdbRating: { type: String, required: false },
-    imdbVotes: { type: String, required: false },
-    imdbID: { type: String, required: false },
-    Type: { type: String, required: false },
-    DVD: { type: String, required: false },
-    BoxOffice: { type: String, required: false },
-    Production: { type: String, required: false },
-    Website: { type: String, required: false },
-    Response: { type: String, required: false },
-    folder: { type: String, required: true },
-    fileName: { type: String, required: false },
-    available: { type: Boolean, required: true}
-})
+// Initialize Sequelize with SQLite database
+const sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: config.database.path // Update with your SQLite database path or connection details for other databases
+});
 
-MovieSchema.index({ Title: 1 });
-MovieSchema.index({ imdbID: 1 });
+// Define the Rating model
+class Rating extends Model<RatingAttributes> implements RatingAttributes {
+    Source: string;
+    Value: string;
+}
+Rating.init({
+    Source: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Value: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    }
+}, {
+    sequelize,
+    modelName: 'Rating',
+    timestamps: false // No createdAt/updatedAt fields
+});
 
-export const MovieCollection = model('Movie', MovieSchema);
+
+class Movie extends Model<MovieAttributes> implements MovieAttributes {
+    Title: string;
+    Year?: string;
+    Rated?: string;
+    Released?: string;
+    Runtime?: string
+    Genre?: string;
+    Director?: string;
+    Writer?: string;
+    Actors?: string;
+    Plot?: string;
+    Language?: string;
+    Country?: string;
+    Awards?: string;
+    Poster?: string;
+    Ratings?: Array<Rating>;
+    Metascore?: string;
+    imdbRating?: string;
+    imdbVotes?: string;
+    imdbID?: string;
+    Type?: string;
+    DVD?: string;
+    BoxOffice?: string;
+    Production?: string;
+    Website?: string;
+    Response?: string;
+    folder: string;
+    fileName?: string;
+    available: boolean;
+}
+
+Movie.init({
+    Title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    Year: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Rated: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Released: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Runtime: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Genre: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Director: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Writer: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Actors: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Plot: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Language: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Country: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Awards: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Poster: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Ratings: {
+        type: DataTypes.JSON, // Store ratings as a JSON array
+        allowNull: true,
+    },
+    Metascore: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    imdbRating: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    imdbVotes: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    imdbID: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Type: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    DVD: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    BoxOffice: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Production: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Website: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Response: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    folder: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    fileName: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    available: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+    }
+}, {
+    sequelize,
+    modelName: 'Movie',
+    timestamps: false,
+    indexes: [
+        {
+            name: 'Title_index',
+            fields: ['Title'],
+        },
+        {
+            name: 'imdbID_index',
+            fields: ['imdbID'],
+        }
+    ]
+});
+
+await sequelize.sync({ force: false });
+
+// Export the models
+export { Movie };

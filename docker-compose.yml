@@ -22,20 +22,6 @@ services:
       - back
     environment:
       - REACT_APP_BACK_URL=192.168.1.149
-#   mongodb:
-#     image: mongo:latest
-#     container_name: mongodb
-#     restart: always
-#     ports:
-#       - "27017:27017"
-#     # environment:
-#     #   - MONGO_INITDB_ROOT_USERNAME=admin  # Replace with your desired admin username
-#     #   - MONGO_INITDB_ROOT_PASSWORD=password  # Replace with your desired password
-#     volumes:
-#       - mongo-data:/data/db
-# volumes:
-#   mongo-data:
-#     driver: local
 
 secrets:
   freebox_secret:

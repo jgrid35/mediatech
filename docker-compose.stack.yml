@@ -19,7 +19,7 @@ services:
       FREEBOX_PORT: "21"
       FREEBOX_MEDIA_FOLDER: "Freebox/Media/Films"
       NODE_ENV: "prod"
-      MONGODB_URI: "mongodb://localhost:27017/mediatech"
+      DB_PATH: /data/db/mediatech.db
     deploy:
       replicas: 1 # Set the number of replicas to deploy
       restart_policy:
@@ -42,23 +42,7 @@ services:
       restart_policy:
         condition: on-failure
     networks:
-      - mediatech-network
-
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
-    restart: always
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
-    # environment:
-    #   - MONGO_INITDB_ROOT_USERNAME=yourUsername
-    #   - MONGO_INITDB_ROOT_PASSWORD=yourPassword
-
-volumes:
-  mongo_data:
-    driver: local
+      - mediatech-networks
 
 secrets:
   freebox_secret:

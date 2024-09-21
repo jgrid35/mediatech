@@ -1,6 +1,6 @@
 mediatech.ts
-client-secret.ts
 tokens.json
 node_modules
 .env
 dist
+*.db

@@ -1,6 +1,6 @@
 import { Sequelize, DataTypes, Model } from 'sequelize';
 import { MovieAttributes, RatingAttributes } from './omdb.js';
-import { config } from 'config.js';
+import { config } from '../config.js';
 
 // Initialize Sequelize with SQLite database
 const sequelize = new Sequelize({

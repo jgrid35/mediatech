@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import https from 'https';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -7,7 +7,6 @@ import bodyParser from 'body-parser';
 import path from 'path';
 import sanitize from 'sanitize-filename';
 import { download, uploadEmptyFile } from './ftps.js'
-import { MovieMetadata } from 'types/omdb.js';
 import { config } from './config.js';
 import { readFileSync } from 'fs';
 import { Movie } from './types/movieSchema.js';
@@ -16,6 +15,7 @@ import { User } from './types/userSchema.js';
 import { getMovieMetadataByID } from './movie.js';
 import { startWorker } from './workers/moviesWorker.js';
 import { parseMovies } from './scripts/parseMovies.js';
+import { errorHandler, errorLogger, requestLogger, successLogger } from './middleware/logger.js';
 
 startWorker();
 const app = express();
@@ -52,7 +52,9 @@ app.use(cors({
 // app.options('*', cors()); 
 app.use(bodyParser.json());
 
-app.post('/login', async (req, res) => {
+app.use(requestLogger);
+
+app.post('/login', async (req: Request, res: Response, next: NextFunction) => {
     const { username, password } = req.body;
 
     // Find user by username
@@ -76,37 +78,49 @@ app.post('/login', async (req, res) => {
 
     // Send token back to the client
     res.json({ token });
+    next();
 });
 
-app.get("/movies", authenticateToken, async (req: express.Request, res: express.Response) => {
-    let moviesMetadata: Array<Movie>;
-    moviesMetadata = await Movie.findAll();
-    res.status(200).send(moviesMetadata);
+app.get("/movies", authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        let moviesMetadata: Array<Movie>;
+        moviesMetadata = await Movie.findAll();
+        res.json(moviesMetadata);
+        next();
+    }
+    catch (err) {
+        next(err);
+    }
 });
 
-app.post("/movie/:imdbID", authenticateToken, async (req: express.Request, res: express.Response) => {
-    const imdbID = req.params.imdbID;
-    const isMovieInDB = await Movie.findOne({
-        where: {
-            imdbID: imdbID
-        },
-        attributes: ['imdbID'] // Specify the attributes you want to return
-    });
-    if (isMovieInDB) return res.status(200).send("Movie already exists");
+app.post("/movie/:imdbID", authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const imdbID = req.params.imdbID;
+        const isMovieInDB = await Movie.findOne({
+            where: {
+                imdbID: imdbID
+            },
+            attributes: ['imdbID'] // Specify the attributes you want to return
+        });
+        if (isMovieInDB) return res.status(200).send("Movie already exists");
 
-    const movieMetadata = await getMovieMetadataByID(imdbID);
+        const movieMetadata = await getMovieMetadataByID(imdbID);
 
-    if (movieMetadata.Response === 'False') return res.status(404).send(`Cannot find movie with ID ${imdbID}`);
+        if (movieMetadata.Response === 'False') return res.status(404).send(`Cannot find movie with ID ${imdbID}`);
 
-    const folder = sanitize(movieMetadata.Title)
-    await Movie.create({ ...movieMetadata, folder, fileName: '', available: false });
-    await uploadEmptyFile(imdbID, folder)
-    return res.status(200).send("Movie created !");
+        const folder = sanitize(movieMetadata.Title)
+        await Movie.create({ ...movieMetadata, folder, fileName: '', available: false });
+        await uploadEmptyFile(imdbID, folder)
+        next();
+    }
+    catch (err) {
+        next(err);
+    }
 });
 
 
 //TO REFACTOR WITH COMMON FUNCTION
-app.get("/download/:imdbID", authenticateTokenDownload, async (req: express.Request, res: express.Response) => {
+app.get("/download/:imdbID", authenticateTokenDownload, async (req: Request, res: Response, next: NextFunction) => {
     try {
         const movieMetadata = await Movie.findOne({
             where: {
@@ -120,14 +134,13 @@ app.get("/download/:imdbID", authenticateTokenDownload, async (req: express.Requ
         res.setHeader("Content-Type", "application/octet-stream");
 
         await download(res, filePath);
-        res.end();
+        next();
     } catch (err) {
-        console.error(err);
-        res.status(500).send("Error downloading file");
+        next(err);
     }
 });
 
-app.get("/download/:imdbID/srt", authenticateTokenDownload, async (req: express.Request, res: express.Response) => {
+app.get("/download/:imdbID/srt", authenticateTokenDownload, async (req: Request, res: Response, next: NextFunction) => {
     try {
         const movieMetadata = await Movie.findOne({
             where: {
@@ -141,9 +154,12 @@ app.get("/download/:imdbID/srt", authenticateTokenDownload, async (req: express.
         res.setHeader("Content-Type", "application/octet-stream");
 
         await download(res, filePath);
-        res.end();
+        next();
     } catch (err) {
-        console.error(err);
-        res.status(500).send("Error downloading file");
+        next(err);
     }
 });
+
+app.use(errorLogger);
+app.use(errorHandler);
+app.use(successLogger);

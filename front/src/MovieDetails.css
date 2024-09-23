@@ -1,0 +1,69 @@
+.movie-details-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px; /* Space between poster and details */
+}
+
+.movie-poster {
+  width: 250px; /* Adjust poster size */
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.movie-details {
+  flex: 1; /* Take up remaining space */
+  text-align: left;
+}
+
+.movie-details-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .movie-details-download-button {
+    background-color: #61dafb;
+    color: #282c34;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+    opacity: 1;
+    margin: 5px;
+  }
+  
+  .movie-details-download-button:hover {
+    transform: scale(1.05);
+    /* Scale effect on hover */
+    background-color: #51c8f0;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 18px;
+  }
+
+  h2 {
+    margin-top:0 !important;
+  }

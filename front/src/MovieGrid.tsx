@@ -1,6 +1,7 @@
 import { useState, useEffect, CSSProperties } from 'react';
 import { Grid, AutoSizer, ScrollSync } from 'react-virtualized';
 import './MovieGrid.css';
+import MovieDetails from './MovieDetails';
 
 interface CellRendererProps {
     columnIndex: number;
@@ -10,12 +11,45 @@ interface CellRendererProps {
     columnCount: number;
 }
 
+export type MovieMetadata = {
+    Title: string,
+    Year?: string,
+    Rated?: string,
+    Released?: string,
+    Runtime?: string,
+    Genre?: string,
+    Director?: string,
+    Writer?: string,
+    Actors?: string,
+    Plot?: string,
+    Language?: string,
+    Country?: string,
+    Awards?: string,
+    Poster?: string,
+    Ratings?: Array<{ Source: string, Value: string }>,
+    Metascore?: string,
+    imdbRating?: string,
+    imdbVotes?: string,
+    imdbID?: string,
+    Type?: string,
+    DVD?: string,
+    BoxOffice?: string,
+    Production?: string,
+    Website?: string,
+    Response?: string,
+    folder: string,
+    fileName?: string,
+    srtFileName?: string,
+    available: boolean
+};
+
 const MovieGrid = () => {
-    const [movies, setMovies] = useState([]);
+    const [movies, setMovies] = useState<Array<MovieMetadata>>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [showPopup, setShowPopup] = useState(false);
     const [urlInput, setUrlInput] = useState('');
+    const [selectedMovie, setSelectedMovie] = useState<MovieMetadata | null>(null);
 
     const url = process.env.REACT_APP_BACK_URL;
     const protocol = process.env.REACT_APP_HTTPS === 'true' ? 'https' : 'http';
@@ -41,7 +75,7 @@ const MovieGrid = () => {
         }
     };
 
-    const handleClick = async (imdbID: string) => {
+    const handleDownload = async (imdbID: string) => {
         const token = localStorage.getItem("authToken");
         if (token) {
             const encodedToken = encodeURIComponent(token);
@@ -49,6 +83,11 @@ const MovieGrid = () => {
         } else {
             console.error("No access token available");
         }
+    };
+
+    const handleClick = (imdbID: string) => {
+        const movie = movies.find((movie) => movie.imdbID === imdbID);
+        if (movie) setSelectedMovie(movie); // Set the selected movie on click
     };
 
     const handleSubtitleDownload = async (imdbID: string) => {
@@ -59,6 +98,10 @@ const MovieGrid = () => {
         } else {
             console.error("No access token available");
         }
+    };
+
+    const handleClosePanel = () => {
+        setSelectedMovie(null); // Close the details panel
     };
 
     function cellRenderer({ columnIndex, key, rowIndex, style, columnCount }: CellRendererProps) {
@@ -83,6 +126,7 @@ const MovieGrid = () => {
 
         return (
             <div
+                onClick={() => handleClick(movie.imdbID || '')}
                 key={key}
                 className={`movie-cell ${!isAvailable ? 'not-available' : ''}`} // Add class if not available
                 style={{
@@ -97,8 +141,8 @@ const MovieGrid = () => {
                 <div className="movie-title">{movie.Title}</div>
                 {isAvailable && ( // Only render buttons if available
                     <>
-                        <button className="download-button" onClick={() => handleClick(movie.imdbID)}>Download Movie</button>
-                        {movie.srtFileName && <button className="subtitle-button" onClick={() => handleSubtitleDownload(movie.imdbID)}>Download Subtitle</button>}
+                        {/* <button className="download-button" onClick={() => handleDownload(movie.imdbID)}>Download Movie</button> */}
+                        {/* {movie.srtFileName && <button className="subtitle-button" onClick={() => handleSubtitleDownload(movie.imdbID)}>Download Subtitle</button>} */}
                     </>
                 )}
             </div>
@@ -129,54 +173,63 @@ const MovieGrid = () => {
 
     return (
         <div>
-            <ScrollSync>
-                {({ onScroll }) => (
-                    <AutoSizer>
-                    {({ height, width }) => {
-                        const columnCount = Math.floor(width / 300); // Calculate columnCount based on width
+            {!selectedMovie ? (
+                <ScrollSync>
+                    {({ onScroll }) => (
+                        <AutoSizer>
+                            {({ height, width }) => {
+                                const columnCount = Math.floor(width / 300); // Calculate columnCount based on width
 
-                        return (
-                            <Grid
-                                cellRenderer={(props) => cellRenderer({ ...props, columnCount })} // Pass columnCount to cellRenderer
-                                columnCount={columnCount}
-                                columnWidth={300}
-                                height={height}
-                                rowCount={Math.ceil(movies.length / columnCount)} // Adjust row count
-                                rowHeight={400}
-                                width={width}
-                                onScroll={onScroll}
-                            />
-                        );
+                                return (
+                                    <Grid
+                                        cellRenderer={(props) => cellRenderer({ ...props, columnCount })} // Pass columnCount to cellRenderer
+                                        columnCount={columnCount}
+                                        columnWidth={300}
+                                        height={height}
+                                        rowCount={Math.ceil(movies.length / columnCount)} // Adjust row count
+                                        rowHeight={400}
+                                        width={width}
+                                        onScroll={onScroll}
+                                    />
+                                );
+                            }}
+                        </AutoSizer>
+                    )}
+
+                </ScrollSync>
+
+            ) : (
+                <MovieDetails
+                    movie={selectedMovie}
+                    onClose={handleClosePanel}
+                    onDownload={handleDownload}
+                    onSubtitleDownload={handleSubtitleDownload}
+                />
+            )}
+            <div>
+                <button
+                    className="add-movie-button"
+                    onClick={() => setShowPopup(true)}
+                    style={{
+                        position: 'fixed',
+                        bottom: '20px',
+                        right: '20px',
+                        backgroundColor: '#61dafb',
+                        color: '#282c34',
+                        border: 'none',
+                        borderRadius: '50%',
+                        width: '60px',
+                        height: '60px',
+                        fontSize: '24px',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.3s',
                     }}
-                </AutoSizer>
-                )}
-            </ScrollSync>
+                >
+                    +
+                </button>
 
-            {/* Floating Add Movie Button */}
-            <button
-                className="add-movie-button"
-                onClick={() => setShowPopup(true)}
-                style={{
-                    position: 'fixed',
-                    bottom: '20px',
-                    right: '20px',
-                    backgroundColor: '#61dafb',
-                    color: '#282c34',
-                    border: 'none',
-                    borderRadius: '50%',
-                    width: '60px',
-                    height: '60px',
-                    fontSize: '24px',
-                    cursor: 'pointer',
-                    transition: 'background-color 0.3s',
-                }}
-            >
-                +
-            </button>
-
-            {/* Popup for adding a movie */}
-            {showPopup && (
-                <div className="popup">
+                {showPopup && (
+                    <div className="popup">
                     <div className="popup-content">
                         <h2>Add Movie</h2>
                         <input
@@ -185,13 +238,15 @@ const MovieGrid = () => {
                             onChange={(e) => setUrlInput(e.target.value)}
                             placeholder="Enter movie URL"
                         />
-                        <button className="download-button" onClick={handleAddMovie}>Confirm</button>
-                        <button className="subtitle-button" onClick={() => setShowPopup(false)}>Cancel</button>
+                        <button className="interface-button" onClick={handleAddMovie}>Confirm</button>
+                        <button className="interface-button" onClick={() => setShowPopup(false)}>Cancel</button>
                     </div>
                 </div>
-            )}
+                )}
+            </div>
         </div>
     );
 };
 
 export default MovieGrid;
+

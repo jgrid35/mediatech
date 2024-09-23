@@ -13,7 +13,7 @@ export async function parseMovies() {
             if (isInDatabase) continue;
         }
         movieMetadata = movie.imdbID ? await getMovieMetadataByID(movie.imdbID) : await getMovieMetadataByTitle(movie.title);
-        let movieObject: MovieAttributes = { ...movieMetadata, folder: movie.title, fileName: movie.fileName, available: true, srtFileName: movie.srtFileName };
+        let movieObject: MovieAttributes = { ...movieMetadata, folder: movie.title, fileName: movie.fileName, available: movie.fileName ? true : false, srtFileName: movie.srtFileName };
 
         if (movieMetadata.Response === 'True') await Movie.create(movieObject as any);
         await uploadEmptyFile(movieMetadata.Response === 'True' ? `${movieMetadata.imdbID}` : 'notfound', movie.title);

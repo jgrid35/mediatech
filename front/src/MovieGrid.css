@@ -1,8 +1,11 @@
 .movie-cell {
   background-color: #3a3f47;
-  padding: 10px; /* Adjust padding if necessary */
-  margin: 10px; /* This margin should be balanced */
-  width: 280px; /* Ensure this width works with your layout */
+  padding: 10px;
+  /* Adjust padding if necessary */
+  margin: 10px;
+  /* This margin should be balanced */
+  width: 280px;
+  /* Ensure this width works with your layout */
   height: 380px;
   border-radius: 10px;
   display: flex;
@@ -12,25 +15,43 @@
   transition: transform 0.3s, box-shadow 0.3s;
   cursor: pointer;
   text-align: center;
-  overflow: hidden; /* Prevent overflow */
+  overflow: hidden;
+  /* Prevent overflow */
 }
 
 .movie-cell:hover {
-  transform: scale(1.05); /* Scale effect on hover */
+  transform: scale(1.05);
+  /* Scale effect on hover */
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
-  z-index: 1; /* Bring hovered cell to the front */
+  z-index: 1;
+  /* Bring hovered cell to the front */
 }
 
 .movie-title {
   margin-top: 10px;
   font-size: 1.1rem;
   color: #fff;
-  background-color: rgba(0, 0, 0, 0.5); /* Slight background to make text more visible */
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Slight background to make text more visible */
   padding: 5px;
   border-radius: 5px;
 }
 
-.download-button, .subtitle-button {
+.interface-button {
+  background-color: #61dafb;
+  color: #282c34;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+  margin: 5px;
+}
+
+.download-button,
+.subtitle-button {
   background-color: #61dafb;
   color: #282c34;
   border: none;
@@ -41,8 +62,6 @@
   margin-top: 10px;
   transition: background-color 0.3s;
   opacity: 0;
-  display: flex;
-  align-items: center;
 }
 
 .subtitle-button {
@@ -50,19 +69,25 @@
   padding: 6px 12px;
 }
 
-.download-button:hover, .subtitle-button:hover {
-  transform: scale(1.05); /* Scale effect on hover */
+.download-button:hover,
+.subtitle-button:hover {
+  transform: scale(1.05);
+  /* Scale effect on hover */
   background-color: #51c8f0;
 }
 
 .movie-cell:hover .download-button {
-  opacity: 1; /* Show on hover */
-  visibility: visible; /* Make it visible */
+  opacity: 1;
+  /* Show on hover */
+  visibility: visible;
+  /* Make it visible */
 }
 
 .movie-cell:hover .subtitle-button {
-  opacity: 1; /* Show on hover */
-  visibility: visible; /* Make it visible */
+  opacity: 1;
+  /* Show on hover */
+  visibility: visible;
+  /* Make it visible */
 }
 
 .popup {
@@ -95,7 +120,10 @@
 }
 
 .not-available {
-  opacity: 0.6; /* Reduce opacity to indicate it's not clickable */
-  cursor: default; /* Change cursor to default */
-  pointer-events: none; /* Disable pointer events */
+  opacity: 0.6;
+  /* Reduce opacity to indicate it's not clickable */
+  cursor: default;
+  /* Change cursor to default */
+  pointer-events: none;
+  /* Disable pointer events */
 }

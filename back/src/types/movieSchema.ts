@@ -57,6 +57,7 @@ class Movie extends Model<MovieAttributes> implements MovieAttributes {
     Response?: string;
     folder: string;
     fileName?: string;
+    srtFileName?: string;
     available: boolean;
 }
 
@@ -166,6 +167,10 @@ Movie.init({
         allowNull: false,
     },
     fileName: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    srtFileName: {
         type: DataTypes.STRING,
         allowNull: true,
     },

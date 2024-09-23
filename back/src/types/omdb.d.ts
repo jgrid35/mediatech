@@ -29,6 +29,7 @@ export type MovieMetadata = {
 export interface MovieAttributes extends MovieMetadata {
     folder: string;
     fileName?: string;
+    srtFileName?: string;
     available: boolean;
 }
 

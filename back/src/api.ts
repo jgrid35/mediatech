@@ -6,7 +6,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import path from 'path';
 import sanitize from 'sanitize-filename';
-import { downloadMovie, uploadEmptyFile } from './ftps.js'
+import { download, uploadEmptyFile } from './ftps.js'
 import { MovieMetadata } from 'types/omdb.js';
 import { config } from './config.js';
 import { readFileSync } from 'fs';
@@ -20,7 +20,7 @@ import { parseMovies } from './scripts/parseMovies.js';
 startWorker();
 const app = express();
 
-
+await parseMovies();
 // Secret key for JWT (in a real-world app, store this securely in an environment variable)
 const jwtSecret = config.server.jwtSecret ? config.server.jwtSecret : readFileSync('/run/secrets/jwt_secret', 'utf8').trim();
 
@@ -105,7 +105,7 @@ app.post("/movie/:imdbID", authenticateToken, async (req: express.Request, res: 
 });
 
 
-
+//TO REFACTOR WITH COMMON FUNCTION
 app.get("/download/:imdbID", authenticateTokenDownload, async (req: express.Request, res: express.Response) => {
     try {
         const movieMetadata = await Movie.findOne({
@@ -119,7 +119,7 @@ app.get("/download/:imdbID", authenticateTokenDownload, async (req: express.Requ
         res.setHeader("Content-Disposition", `attachment; filename="${movieMetadata.dataValues.fileName}"`);
         res.setHeader("Content-Type", "application/octet-stream");
 
-        await downloadMovie(res, filePath);
+        await download(res, filePath);
         res.end();
     } catch (err) {
         console.error(err);
@@ -127,7 +127,23 @@ app.get("/download/:imdbID", authenticateTokenDownload, async (req: express.Requ
     }
 });
 
-app.get("/parse", async (req: express.Request, res: express.Response) => {
-    parseMovies();
-    res.status(200).send(true);
+app.get("/download/:imdbID/srt", authenticateTokenDownload, async (req: express.Request, res: express.Response) => {
+    try {
+        const movieMetadata = await Movie.findOne({
+            where: {
+                imdbID: req.params.imdbID
+            },
+            attributes: ['folder', 'srtFileName'] // Specify the attributes you want to return
+        });
+        const filePath = path.join(config.freebox.folder, movieMetadata.dataValues.folder, movieMetadata.dataValues.srtFileName);
+        // Set appropriate headers for download
+        res.setHeader("Content-Disposition", `attachment; filename="${movieMetadata.dataValues.srtFileName}"`);
+        res.setHeader("Content-Type", "application/octet-stream");
+
+        await download(res, filePath);
+        res.end();
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error downloading file");
+    }
 });

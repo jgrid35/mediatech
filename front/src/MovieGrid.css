@@ -40,15 +40,29 @@
   cursor: pointer;
   margin-top: 10px;
   transition: background-color 0.3s;
-}
-
-.download-button:hover, .subtitle-button:hover {
-  background-color: #51c8f0;
+  opacity: 0;
+  display: flex;
+  align-items: center;
 }
 
 .subtitle-button {
   font-size: 0.9rem;
   padding: 6px 12px;
+}
+
+.download-button:hover, .subtitle-button:hover {
+  transform: scale(1.05); /* Scale effect on hover */
+  background-color: #51c8f0;
+}
+
+.movie-cell:hover .download-button {
+  opacity: 1; /* Show on hover */
+  visibility: visible; /* Make it visible */
+}
+
+.movie-cell:hover .subtitle-button {
+  opacity: 1; /* Show on hover */
+  visibility: visible; /* Make it visible */
 }
 
 .popup {

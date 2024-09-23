@@ -55,7 +55,7 @@ const MovieGrid = () => {
         const token = localStorage.getItem("authToken");
         if (token) {
             const encodedToken = encodeURIComponent(token);
-            window.open(`${protocol}://${url}:3001/download-subtitle/${imdbID}?token=${encodedToken}`);
+            window.open(`${protocol}://${url}:3001/download/${imdbID}/srt?token=${encodedToken}`);
         } else {
             console.error("No access token available");
         }
@@ -98,7 +98,7 @@ const MovieGrid = () => {
                 {isAvailable && ( // Only render buttons if available
                     <>
                         <button className="download-button" onClick={() => handleClick(movie.imdbID)}>Download Movie</button>
-                        <button className="subtitle-button" onClick={() => handleSubtitleDownload(movie.imdbID)}>Download Subtitle</button>
+                        {movie.srtFileName && <button className="subtitle-button" onClick={() => handleSubtitleDownload(movie.imdbID)}>Download Subtitle</button>}
                     </>
                 )}
             </div>

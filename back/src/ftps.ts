@@ -28,11 +28,12 @@ export async function ftpConnect(): Promise<Client> {
     return client;
 }
 
-export async function getMovieList(): Promise<Array<{ title: string, imdbID?: string, fileName: string }>> {
+export async function getMovieList(): Promise<Array<{ title: string, imdbID?: string, fileName?: string, srtFileName?: string }>> {
     const client = await ftpConnect();
-    let movies: Array<{ title: string, imdbID?: string, fileName: string }> = [];
+    let movies: Array<{ title: string, imdbID?: string, fileName?: string, srtFileName?: string }> = [];
     const regexImdbID = new RegExp('^tt[0-9]*');
     const regexFileName = new RegExp('(\.mkv|\.avi|.mp4)$');
+    const regexSrtFileName = new RegExp('(\.srt)$');
 
     try {
         await client.cd(config.freebox.folder);
@@ -40,15 +41,15 @@ export async function getMovieList(): Promise<Array<{ title: string, imdbID?: st
         for (const movieFolder of movieFolders) {
             if (movieFolder.type !== 2) continue;
             const files = await client.list(path.join('/', config.freebox.folder, movieFolder.name));
-            const imdbID = files.filter(f => f.type === 1 && regexImdbID.test(f.name));
-            const fileName = files.filter(f => f.type === 1 && regexFileName.test(f.name));
+            const imdbIDFileInfo = files.filter(f => f.type === 1 && regexImdbID.test(f.name));
+            const fileNameFileInfo = files.filter(f => f.type === 1 && regexFileName.test(f.name));
+            const srtFileNameFileInfo = files.filter(f => f.type === 1 && regexSrtFileName.test(f.name));
 
-            if (imdbID.length >= 1) {
-                movies.push({ title: movieFolder.name, imdbID: imdbID[0].name, fileName: fileName[0].name })
-            }
-            else {
-                movies.push({ title: movieFolder.name, fileName: fileName[0].name })
-            }
+            const imdbID = imdbIDFileInfo.length >= 1 ? imdbIDFileInfo[0].name : null;
+            const fileName = fileNameFileInfo.length >= 1 ? fileNameFileInfo[0].name : null;
+            const srtFileName = srtFileNameFileInfo.length >= 1 ? srtFileNameFileInfo[0].name : null;
+
+            movies.push({ title: movieFolder.name, imdbID, fileName, srtFileName })
         }
     }
     catch (error) {
@@ -61,7 +62,7 @@ export async function getMovieList(): Promise<Array<{ title: string, imdbID?: st
 }
 
 
-export async function downloadMovie(res: Express.Response, filePath: string): Promise<void> {
+export async function download(res: Express.Response, filePath: string): Promise<void> {
     const client = await ftpConnect();
     try {
         await client.downloadTo(res as Writable, filePath);

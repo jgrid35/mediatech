@@ -31,7 +31,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, onClose, onDownload,
                     <p><strong>Country:</strong> {movie.Country}</p>
                     <p><strong>Genre:</strong> {movie.Genre}</p>
                     <p><strong>Runtime:</strong> {movie.Runtime}</p>
-                    <p><strong>imdbRating:</strong> {movie.imdbRating}</p>
+                    <p><strong>Rating:</strong> {movie.imdbRating}/10</p>
                 </div>
 
 

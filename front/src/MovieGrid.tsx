@@ -230,18 +230,18 @@ const MovieGrid = () => {
 
                 {showPopup && (
                     <div className="popup">
-                    <div className="popup-content">
-                        <h2>Add Movie</h2>
-                        <input
-                            type="text"
-                            value={urlInput}
-                            onChange={(e) => setUrlInput(e.target.value)}
-                            placeholder="Enter movie URL"
-                        />
-                        <button className="interface-button" onClick={handleAddMovie}>Confirm</button>
-                        <button className="interface-button" onClick={() => setShowPopup(false)}>Cancel</button>
+                        <div className="popup-content">
+                            <h2>Request Movie</h2>
+                            <input
+                                type="text"
+                                value={urlInput}
+                                onChange={(e) => setUrlInput(e.target.value)}
+                                placeholder="Enter IMDB URL"
+                            />
+                            <button className="interface-button" onClick={handleAddMovie}>Confirm</button>
+                            <button className="interface-button" onClick={() => setShowPopup(false)}>Cancel</button>
+                        </div>
                     </div>
-                </div>
                 )}
             </div>
         </div>

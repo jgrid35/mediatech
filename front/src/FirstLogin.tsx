@@ -6,42 +6,38 @@ import "./Login.css"; // You can place additional styling in a separate CSS file
 const url = process.env.REACT_APP_BACK_URL;
 const protocol = process.env.REACT_APP_HTTPS === "true" ? "https" : "http";
 
-const Login = () => {
-  const [username, setUsername] = useState("");
+const FirstLogin = () => {
   const [password, setPassword] = useState("");
+  const [passwordCheck, setPasswordCheck] = useState("");
   const [error, setError] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    const token = localStorage.getItem("authToken");
     try {
-      const response = await fetch(`${protocol}://${url}:3001/login`, {
+      if (password !== passwordCheck) {
+        setError("Passwords are not identical");
+        return;
+      }
+
+      const response = await fetch(`${protocol}://${url}:3001/password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ password }),
       });
 
       if (!response.ok) {
         const data = await response.json();
-        setError(data.error || "Login failed");
+        setError(data.error || "Can't change password");
         return;
       }
-      
-      const data = await response.json();
-      const token = data.token;
-      localStorage.setItem("authToken", token);
 
-      login(); // Call login function to update the auth context
-      if (data.firstLogin) {
-        navigate("/first-login")
-      }
-      else {
-        navigate("/dashboard"); // Navigate to dashboard after successful login
-      }
+      navigate("/dashboard"); // Navigate to dashboard after successful login
 
     } catch (err) {
       setError("An error occurred during login");
@@ -50,22 +46,11 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <h2>Login</h2>
+      <h2>Create new password</h2>
       {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleSubmit} className="login-form">
         <div className="form-group">
-          <label htmlFor="username">Username</label>
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="form-input"
-            placeholder="Enter your username"
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
+          <label htmlFor="password">New password</label>
           <input
             type="password"
             id="password"
@@ -75,10 +60,21 @@ const Login = () => {
             placeholder="Enter your password"
           />
         </div>
-        <button type="submit" className="login-button">Login</button>
+        <div className="form-group">
+          <label htmlFor="password">Retype password</label>
+          <input
+            type="password"
+            id="password"
+            value={passwordCheck}
+            onChange={(e) => setPasswordCheck(e.target.value)}
+            className="form-input"
+            placeholder="Enter your password"
+          />
+        </div>
+        <button type="submit" className="login-button">Update password</button>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default FirstLogin;

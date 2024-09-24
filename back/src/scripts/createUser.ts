@@ -8,6 +8,7 @@ const [user, created] = await User.findOrCreate({
     where: { username: args[0] },
     defaults: {
         password: await bcrypt.hash(args[1], 10),
+        firstLogin: true,
     }
 });
 

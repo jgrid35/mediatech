@@ -12,6 +12,7 @@ interface UserAttributes {
     username: string;
     password: string;
     role?: string | null; // Optional property
+    firstLogin: boolean;
 }
 
 // Define the User model
@@ -19,6 +20,7 @@ class User extends Model<UserAttributes> implements UserAttributes {
     public username!: string; // Note the exclamation mark for non-null assertion
     public password!: string;
     public role?: string | null;
+    public firstLogin: boolean;
 }
 
 User.init({
@@ -33,6 +35,10 @@ User.init({
     role: {
         type: DataTypes.STRING,
         allowNull: true, // Not required
+    },
+    firstLogin: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
     }
 }, {
     sequelize, // Pass the `sequelize` instance

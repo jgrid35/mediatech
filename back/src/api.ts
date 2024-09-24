@@ -72,14 +72,34 @@ app.post('/login', async (req: Request, res: Response, next: NextFunction) => {
     }
 
     // Generate JWT
-    const token = jwt.sign({ userId: user.username, username: user.username }, jwtSecret, {
+    const token = jwt.sign({ userId: user.dataValues.username, username: user.dataValues.username }, jwtSecret, {
         expiresIn: '1h' // Token expires in 1 hour
     });
 
     // Send token back to the client
-    res.json({ token });
+    res.json({ firstLogin: user.dataValues.firstLogin, token });
     next();
 });
+
+app.post("/password", authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { password } = req.body;
+        const user = await User.findOne({
+            where: { username: req.user.username }
+        });
+    
+        user.update({
+            password: await bcrypt.hash(password, 10),
+            firstLogin: false
+        });
+    
+        user.save();
+        next();
+    }
+    catch(err){
+        next(err);
+    }
+})
 
 app.get("/movies", authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
     try {
